@@ -24,8 +24,8 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
         position: "relative",
         overflow: "hidden",
       }}
-      onMouseEnter={() => setIsCardHovered(true)}
-      onMouseLeave={() => setIsCardHovered(false)}
+      onPointerEnter={() => setIsCardHovered(true)}
+      onPointerLeave={() => setIsCardHovered(false)}
     >
       {/* Status pip */}
       <div
@@ -154,8 +154,8 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
           flexShrink: 0,
           transition: "color 0.15s",
         }}
-        onMouseEnter={() => setIsRemoveHovered(true)}
-        onMouseLeave={() => setIsRemoveHovered(false)}
+        onPointerEnter={() => setIsRemoveHovered(true)}
+        onPointerLeave={() => setIsRemoveHovered(false)}
         title="Remove"
       >
         ×
