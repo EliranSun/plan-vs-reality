@@ -29,7 +29,7 @@ export function usePlanVsReality() {
   const [plan, setPlan] = useState(saved?.plan ?? DEMO_PLAN);
   const [execution, setExecution] = useState(saved?.execution ?? emptyPhases());
   const [synced, setSynced] = useState(saved?.synced ?? false);
-  const [view, setView] = useState(saved?.view ?? "split");
+  const [view, setView] = useState(saved?.view ?? (saved?.synced ? "focus" : "split"));
 
   // Auto-save on every state change
   useEffect(() => {
