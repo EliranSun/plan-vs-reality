@@ -1,17 +1,22 @@
 import { PHASES, STATUS_COLORS } from "../../constants/phases";
 
+const weight = (task) => task.estimatedMinutes ?? 1;
+
 export default function DiffSummary({ plan, execution }) {
-  let planned = 0, completed = 0, dropped = 0, unplanned = 0;
+  let planned = 0, plannedWeight = 0, completed = 0, completedWeight = 0, dropped = 0, unplanned = 0;
   PHASES.forEach((p) => {
-    planned += (plan[p.id] || []).length;
+    (plan[p.id] || []).forEach((t) => {
+      planned++;
+      plannedWeight += weight(t);
+    });
     (execution[p.id] || []).forEach((t) => {
-      if (t.status === "completed") completed++;
+      if (t.status === "completed") { completed++; completedWeight += weight(t); }
       if (t.status === "dropped") dropped++;
       if (t.status === "unplanned") unplanned++;
     });
   });
 
-  const hitRate = planned > 0 ? Math.round((completed / planned) * 100) : 0;
+  const hitRate = plannedWeight > 0 ? Math.round((completedWeight / plannedWeight) * 100) : 0;
 
   const stats = [
     { label: "Planned", value: planned, color: "rgba(255,255,255,0.6)" },
