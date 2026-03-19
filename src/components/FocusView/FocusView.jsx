@@ -10,7 +10,7 @@ function getCurrentPhaseIdx() {
   return 0;
 }
 
-export default function FocusView({ execution, updateExecTask, setView }) {
+export default function FocusView({ execution, currentDate, updateExecTask, setView }) {
   const [activeIdx, setActiveIdx] = useState(getCurrentPhaseIdx);
   const [slideDir, setSlideDir] = useState("right");
   const [poppingId, setPoppingId] = useState(null);
@@ -113,17 +113,27 @@ export default function FocusView({ execution, updateExecTask, setView }) {
           ← Plan vs Reality
         </button>
 
-        {totalCount > 0 && (
-          <span
-            style={{
-              fontSize: 13,
-              color: "rgba(255,255,255,0.25)",
-              fontVariantNumeric: "tabular-nums",
-            }}
-          >
-            {completedCount}/{totalCount}
-          </span>
-        )}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {currentDate && (
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>
+              {new Date(currentDate + "T00:00:00").toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+          )}
+          {totalCount > 0 && (
+            <span
+              style={{
+                fontSize: 13,
+                color: "rgba(255,255,255,0.25)",
+                fontVariantNumeric: "tabular-nums",
+              }}
+            >
+              {completedCount}/{totalCount}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Phase header */}

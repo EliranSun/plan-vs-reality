@@ -5,6 +5,13 @@ import PhaseBlock from "../PhaseBlock/PhaseBlock";
 import DiffSummary from "../DiffSummary/DiffSummary";
 import DataMenu from "../DataMenu/DataMenu";
 import FocusView from "../FocusView/FocusView";
+import CalendarView from "../CalendarView/CalendarView";
+
+function offsetDate(dateStr, days) {
+  const d = new Date(dateStr + "T00:00:00");
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
 
 export default function PlanVsReality() {
   const {
@@ -12,7 +19,10 @@ export default function PlanVsReality() {
     execution,
     synced,
     view,
+    currentDate,
+    allDaySummaries,
     setView,
+    navigateToDate,
     addPlanTask,
     updatePlanTask,
     removePlanTask,
@@ -26,14 +36,36 @@ export default function PlanVsReality() {
   } = usePlanVsReality();
 
   const [isSyncHovered, setIsSyncHovered] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const isToday = currentDate === todayStr;
+
+  const formattedDate = new Date(currentDate + "T00:00:00").toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
 
   const showPlan = view === "split" || view === "plan";
   const showExec = view === "split" || view === "execution";
+
+  if (calendarOpen) {
+    return (
+      <CalendarView
+        allDaySummaries={allDaySummaries}
+        currentDate={currentDate}
+        onSelectDate={navigateToDate}
+        onClose={() => setCalendarOpen(false)}
+      />
+    );
+  }
 
   if (view === "focus") {
     return (
       <FocusView
         execution={execution}
+        currentDate={currentDate}
         updateExecTask={updateExecTask}
         setView={setView}
       />
@@ -76,19 +108,87 @@ export default function PlanVsReality() {
             </span>{" "}
             Reality
           </h1>
-          <p
+          <div
             style={{
-              fontSize: 14,
-              color: "rgba(255,255,255,0.35)",
-              margin: "6px 0 0",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              marginTop: 6,
             }}
           >
-            {new Date().toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
+            <button
+              onClick={() => navigateToDate(offsetDate(currentDate, -1))}
+              title="Previous day"
+              style={{
+                background: "none",
+                border: "none",
+                color: "rgba(255,255,255,0.25)",
+                fontSize: 16,
+                cursor: "pointer",
+                padding: "0 4px",
+                lineHeight: 1,
+              }}
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => setCalendarOpen(true)}
+              title="Open calendar"
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 14,
+                  color: isToday ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.55)",
+                }}
+              >
+                {formattedDate}
+              </span>
+              <span style={{ fontSize: 13, opacity: 0.4 }}>📅</span>
+            </button>
+            <button
+              onClick={() => navigateToDate(offsetDate(currentDate, 1))}
+              title="Next day"
+              style={{
+                background: "none",
+                border: "none",
+                color: "rgba(255,255,255,0.25)",
+                fontSize: 16,
+                cursor: "pointer",
+                padding: "0 4px",
+                lineHeight: 1,
+              }}
+            >
+              ›
+            </button>
+            {!isToday && (
+              <button
+                onClick={() => navigateToDate(todayStr)}
+                title="Go to today"
+                style={{
+                  background: "rgba(255,255,255,0.06)",
+                  border: "none",
+                  borderRadius: 5,
+                  color: "rgba(255,255,255,0.4)",
+                  fontSize: 10,
+                  cursor: "pointer",
+                  padding: "3px 7px",
+                  fontFamily: "'DM Sans', sans-serif",
+                  letterSpacing: 0.3,
+                }}
+              >
+                Today
+              </button>
+            )}
+          </div>
         </div>
         <DataMenu
           plan={plan}
