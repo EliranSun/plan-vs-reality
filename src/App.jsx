@@ -1,4 +1,4 @@
-import PlanVsReality from './components/PlanVsReality'
+import PlanVsReality from './components/PlanVsReality/PlanVsReality'
 
 function App() {
   return <PlanVsReality />
