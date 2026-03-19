@@ -3,6 +3,7 @@ import { usePlanVsReality } from "../../hooks/usePlanVsReality";
 import { PHASES, STATUS_COLORS, STATUS_LABELS } from "../../constants/phases";
 import PhaseBlock from "../PhaseBlock/PhaseBlock";
 import DiffSummary from "../DiffSummary/DiffSummary";
+import DataMenu from "../DataMenu/DataMenu";
 
 export default function PlanVsReality() {
   const {
@@ -18,6 +19,9 @@ export default function PlanVsReality() {
     updateExecTask,
     removeExecTask,
     syncToExecution,
+    importData,
+    resetToDemo,
+    clearAll,
   } = usePlanVsReality();
 
   const [isSyncHovered, setIsSyncHovered] = useState(false);
@@ -43,36 +47,46 @@ export default function PlanVsReality() {
       />
 
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontSize: 36,
-            fontWeight: 400,
-            color: "rgba(255,255,255,0.92)",
-            margin: 0,
-            letterSpacing: -0.5,
-          }}
-        >
-          Plan{" "}
-          <span style={{ color: "rgba(255,255,255,0.25)", fontStyle: "italic" }}>
-            vs.
-          </span>{" "}
-          Reality
-        </h1>
-        <p
-          style={{
-            fontSize: 14,
-            color: "rgba(255,255,255,0.35)",
-            margin: "6px 0 0",
-          }}
-        >
-          {new Date().toLocaleDateString("en-US", {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
+      <div style={{ marginBottom: 28, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+        <div>
+          <h1
+            style={{
+              fontFamily: "'Instrument Serif', serif",
+              fontSize: 36,
+              fontWeight: 400,
+              color: "rgba(255,255,255,0.92)",
+              margin: 0,
+              letterSpacing: -0.5,
+            }}
+          >
+            Plan{" "}
+            <span style={{ color: "rgba(255,255,255,0.25)", fontStyle: "italic" }}>
+              vs.
+            </span>{" "}
+            Reality
+          </h1>
+          <p
+            style={{
+              fontSize: 14,
+              color: "rgba(255,255,255,0.35)",
+              margin: "6px 0 0",
+            }}
+          >
+            {new Date().toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}
+          </p>
+        </div>
+        <DataMenu
+          plan={plan}
+          execution={execution}
+          synced={synced}
+          onImport={importData}
+          onResetToDemo={resetToDemo}
+          onClearAll={clearAll}
+        />
       </div>
 
       {/* View toggle */}
