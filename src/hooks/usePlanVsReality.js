@@ -48,6 +48,7 @@ export function usePlanVsReality() {
     });
     setExecution(exec);
     setSynced(true);
+    setView("focus");
   }, [plan]);
 
   const addPlanTask = useCallback((phaseId) => {
