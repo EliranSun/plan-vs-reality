@@ -56,10 +56,10 @@ function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask 
         onClick={() => onAddTask(phase.id)}
         style={{
           marginTop: 8,
-          padding: "6px 12px",
+          padding: "10px 16px",
           border: `1px dashed ${isAddHovered ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.12)"}`,
           borderRadius: 8,
-          background: "transparent",
+          background: isAddHovered ? "rgba(255,255,255,0.04)" : "transparent",
           color: isAddHovered ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.3)",
           fontSize: 13,
           cursor: "pointer",
@@ -67,8 +67,8 @@ function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask 
           fontFamily: "'DM Sans', sans-serif",
           transition: "all 0.15s",
         }}
-        onMouseEnter={() => setIsAddHovered(true)}
-        onMouseLeave={() => setIsAddHovered(false)}
+        onPointerEnter={() => setIsAddHovered(true)}
+        onPointerLeave={() => setIsAddHovered(false)}
       >
         + add task
       </button>

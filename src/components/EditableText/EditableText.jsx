@@ -15,12 +15,14 @@ export default function EditableText({ value, onChange, placeholder, className, 
         className={className}
         style={{
           ...style,
-          background: "transparent",
+          fontSize: 16, // Prevents iOS Safari auto-zoom on focus
+          background: "rgba(255,255,255,0.06)",
           border: "none",
-          borderBottom: "1.5px solid var(--accent)",
+          borderBottom: "2px solid rgba(255,255,255,0.5)",
+          borderRadius: "4px 4px 0 0",
           outline: "none",
           width: "100%",
-          padding: "2px 0",
+          padding: "4px 6px",
         }}
         value={value}
         placeholder={placeholder}
