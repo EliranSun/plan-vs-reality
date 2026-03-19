@@ -4,6 +4,7 @@ import { PHASES, STATUS_COLORS, STATUS_LABELS } from "../../constants/phases";
 import PhaseBlock from "../PhaseBlock/PhaseBlock";
 import DiffSummary from "../DiffSummary/DiffSummary";
 import DataMenu from "../DataMenu/DataMenu";
+import FocusView from "../FocusView/FocusView";
 
 export default function PlanVsReality() {
   const {
@@ -28,6 +29,16 @@ export default function PlanVsReality() {
 
   const showPlan = view === "split" || view === "plan";
   const showExec = view === "split" || view === "execution";
+
+  if (view === "focus") {
+    return (
+      <FocusView
+        execution={execution}
+        updateExecTask={updateExecTask}
+        setView={setView}
+      />
+    );
+  }
 
   return (
     <div
@@ -105,6 +116,7 @@ export default function PlanVsReality() {
           { id: "plan", label: "Plan" },
           { id: "split", label: "Split" },
           { id: "execution", label: "Reality" },
+          ...(synced ? [{ id: "focus", label: "Focus" }] : []),
         ].map((v) => (
           <button
             key={v.id}
