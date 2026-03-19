@@ -18,7 +18,7 @@ function formatMinutes(minutes) {
   return `${Math.floor(minutes / 60)}h${minutes % 60}m`;
 }
 
-function TimePill({ estimatedMinutes, onChange }) {
+function TimePill({ estimatedMinutes, onChange, visible }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -33,6 +33,8 @@ function TimePill({ estimatedMinutes, onChange }) {
 
   const label = formatMinutes(estimatedMinutes);
 
+  if (!label && !visible) return null;
+
   return (
     <div ref={ref} style={{ position: "relative", flexShrink: 0 }}>
       <button
@@ -40,9 +42,9 @@ function TimePill({ estimatedMinutes, onChange }) {
         title={label ? `Estimate: ${label}. Click to change.` : "Set time estimate"}
         style={{
           background: label ? "rgba(255,255,255,0.12)" : "transparent",
-          border: `1px solid ${label ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.1)"}`,
+          border: `1px solid ${label ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.15)"}`,
           borderRadius: 8,
-          color: label ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.25)",
+          color: label ? "rgba(255,255,255,0.65)" : "rgba(255,255,255,0.35)",
           cursor: "pointer",
           fontSize: 10,
           fontFamily: "'DM Sans', sans-serif",
@@ -269,6 +271,7 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
       <TimePill
         estimatedMinutes={task.estimatedMinutes}
         onChange={(minutes) => onUpdate({ ...task, estimatedMinutes: minutes })}
+        visible={isCardHovered}
       />
 
       <button
