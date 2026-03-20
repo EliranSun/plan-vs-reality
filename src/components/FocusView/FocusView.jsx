@@ -204,6 +204,11 @@ export default function FocusView({ execution, currentDate, updateExecTask, setV
             const isDropped = task.status === "dropped";
             const isPopping = poppingId === task.id;
             const wasJustCompleted = justCompletedId === task.id;
+            const hasEstimate = Number.isFinite(task.estimatedMinutes) && task.estimatedMinutes > 0;
+            const showPlannedMeta = task.status !== "unplanned";
+            const plannedMeta = hasEstimate
+              ? `Planned · ${task.estimatedMinutes}m estimated`
+              : "Planned task";
 
             return (
               <div
@@ -251,6 +256,19 @@ export default function FocusView({ execution, currentDate, updateExecTask, setV
                   >
                     {task.text || <em style={{ opacity: 0.4 }}>Untitled task</em>}
                   </span>
+                  {showPlannedMeta && (
+                    <span
+                      style={{
+                        display: "block",
+                        marginTop: 4,
+                        fontSize: 12,
+                        color: isDropped ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.3)",
+                        letterSpacing: 0.2,
+                      }}
+                    >
+                      {plannedMeta}
+                    </span>
+                  )}
 
                   {/* Animated strikethrough */}
                   {isCompleted && (
