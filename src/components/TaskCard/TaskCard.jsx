@@ -33,7 +33,7 @@ function TimePill({ estimatedMinutes, onChange, visible }) {
 
   const label = formatMinutes(estimatedMinutes);
 
-  if (!label && !visible) return null;
+  if (!label && !visible && !open) return null;
 
   return (
     <div ref={ref} style={{ position: "relative", flexShrink: 0 }}>
