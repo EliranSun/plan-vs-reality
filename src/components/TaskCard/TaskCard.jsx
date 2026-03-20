@@ -271,7 +271,7 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
       <TimePill
         estimatedMinutes={task.estimatedMinutes}
         onChange={(minutes) => onUpdate({ ...task, estimatedMinutes: minutes })}
-        visible={isCardHovered}
+        visible={true}
       />
 
       <button
