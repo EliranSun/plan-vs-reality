@@ -1,15 +1,42 @@
-import { useState, memo } from "react";
+import { useState, useRef, useCallback, memo } from "react";
 import EditableText from "../EditableText/EditableText";
-import { STATUS_COLORS, STATUS_LABELS } from "../../constants/phases";
+import { STATUS_COLORS, STATUS_LABELS, PHASES } from "../../constants/phases";
 import TimePill from "../TimePill/TimePill";
 
-function TaskCard({ task, side, onUpdate, onRemove }) {
+const PHASE_LABELS = Object.fromEntries(PHASES.map((p) => [p.id, p.label]));
+
+function TaskCard({ task, side, onUpdate, onRemove, onMoveRequest }) {
   const isExecution = side === "execution";
   const statusColor = STATUS_COLORS[task.status] || STATUS_COLORS.pending;
   const [isCardHovered, setIsCardHovered] = useState(false);
   const [isRemoveHovered, setIsRemoveHovered] = useState(false);
+  const [isPressing, setIsPressing] = useState(false);
 
-  const originalPhase = isExecution ? task.sourcePhasId : null;
+  const pressTimer = useRef(null);
+
+  const clearPress = useCallback(() => {
+    clearTimeout(pressTimer.current);
+    pressTimer.current = null;
+    setIsPressing(false);
+  }, []);
+
+  const handlePointerDown = useCallback(
+    (e) => {
+      if (!isExecution || !onMoveRequest) return;
+      // Ignore right-clicks and non-primary buttons
+      if (e.button && e.button !== 0) return;
+      setIsPressing(true);
+      pressTimer.current = setTimeout(() => {
+        setIsPressing(false);
+        onMoveRequest(task);
+      }, 500);
+    },
+    [isExecution, onMoveRequest, task]
+  );
+
+  const handlePointerUp = useCallback(() => {
+    clearPress();
+  }, [clearPress]);
 
   return (
     <div
@@ -19,14 +46,39 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
         gap: 10,
         padding: "10px 14px",
         borderRadius: 10,
-        background: isCardHovered ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.04)",
-        border: `1px solid ${isCardHovered ? statusColor + "44" : "rgba(255,255,255,0.07)"}`,
+        background: isPressing
+          ? "rgba(251,191,36,0.08)"
+          : isCardHovered
+          ? "rgba(255,255,255,0.08)"
+          : "rgba(255,255,255,0.04)",
+        border: `1px solid ${
+          isPressing
+            ? STATUS_COLORS.moved + "55"
+            : isCardHovered
+            ? statusColor + "44"
+            : "rgba(255,255,255,0.07)"
+        }`,
         transition: "all 0.2s",
         position: "relative",
         overflow: "visible",
+        transform: isPressing ? "scale(0.98)" : "scale(1)",
+        touchAction: isExecution ? "none" : "auto",
       }}
       onPointerEnter={() => setIsCardHovered(true)}
-      onPointerLeave={() => setIsCardHovered(false)}
+      onPointerLeave={() => {
+        setIsCardHovered(false);
+        clearPress();
+      }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={clearPress}
+      onContextMenu={(e) => {
+        if (isExecution && onMoveRequest) {
+          e.preventDefault();
+          clearPress();
+          onMoveRequest(task);
+        }
+      }}
     >
       {/* Status pip */}
       <div
@@ -43,16 +95,18 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
 
       {isExecution ? (
         <button
-          onClick={() => {
+          onClick={(e) => {
+            e.stopPropagation();
             const next =
-              task.status === "pending"
+              task.status === "pending" || task.status === "moved"
                 ? "completed"
                 : task.status === "completed"
                 ? "dropped"
                 : "pending";
             onUpdate({ ...task, status: next });
           }}
-          title={`Status: ${STATUS_LABELS[task.status]}. Click to cycle.`}
+          onPointerDown={(e) => e.stopPropagation()}
+          title={`Status: ${STATUS_LABELS[task.status] || STATUS_LABELS.pending}. Click to cycle.`}
           style={{
             width: 22,
             height: 22,
@@ -123,23 +177,20 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
             unplanned
           </span>
         )}
-        {isExecution &&
-          task.status === "moved" &&
-          originalPhase &&
-          originalPhase !== task.movedFrom && (
-            <span
-              style={{
-                fontSize: 10,
-                color: STATUS_COLORS.moved,
-                fontWeight: 600,
-                letterSpacing: 0.5,
-                marginTop: 2,
-                display: "block",
-              }}
-            >
-              moved from {originalPhase}
-            </span>
-          )}
+        {isExecution && task.status === "moved" && task.movedFrom && (
+          <span
+            style={{
+              fontSize: 10,
+              color: STATUS_COLORS.moved,
+              fontWeight: 600,
+              letterSpacing: 0.5,
+              marginTop: 2,
+              display: "block",
+            }}
+          >
+            moved from {PHASE_LABELS[task.movedFrom] || task.movedFrom}
+          </span>
+        )}
       </div>
 
       <TimePill
@@ -149,7 +200,11 @@ function TaskCard({ task, side, onUpdate, onRemove }) {
       />
 
       <button
-        onClick={onRemove}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRemove();
+        }}
+        onPointerDown={(e) => e.stopPropagation()}
         style={{
           background: "none",
           border: "none",
