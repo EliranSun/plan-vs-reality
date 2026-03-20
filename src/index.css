@@ -44,3 +44,31 @@ body {
   from { opacity: 0; transform: translateY(-12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.pvr-container {
+  padding: 32px 24px 64px;
+}
+
+.pvr-split-grid {
+  display: grid;
+  gap: 32px;
+}
+
+.pvr-split-grid.is-split {
+  grid-template-columns: 1fr 1fr;
+}
+
+.pvr-split-grid.is-single {
+  grid-template-columns: 1fr;
+}
+
+@media (max-width: 600px) {
+  .pvr-container {
+    padding: 20px 16px 48px;
+  }
+
+  .pvr-split-grid.is-split {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

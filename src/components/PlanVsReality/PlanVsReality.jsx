@@ -80,14 +80,15 @@ export default function PlanVsReality() {
 
   return (
     <div
+      className="pvr-container"
       style={{
         minHeight: "100vh",
         background: "#0f1117",
         color: "#fff",
         fontFamily: "'DM Sans', sans-serif",
-        padding: "32px 24px 64px",
         maxWidth: 960,
         margin: "0 auto",
+        boxSizing: "border-box",
       }}
     >
       <link
@@ -279,11 +280,7 @@ export default function PlanVsReality() {
 
       {/* Two columns */}
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: view === "split" ? "1fr 1fr" : "1fr",
-          gap: 32,
-        }}
+        className={`pvr-split-grid ${view === "split" ? "is-split" : "is-single"}`}
       >
         {/* Plan Column */}
         {showPlan && (
