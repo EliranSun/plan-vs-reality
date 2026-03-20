@@ -6,6 +6,7 @@ import DiffSummary from "../DiffSummary/DiffSummary";
 import DataMenu from "../DataMenu/DataMenu";
 import FocusView from "../FocusView/FocusView";
 import CalendarView from "../CalendarView/CalendarView";
+import MoveMenu from "../MoveMenu/MoveMenu";
 
 function offsetDate(dateStr, days) {
   const d = new Date(dateStr + "T00:00:00");
@@ -29,6 +30,8 @@ export default function PlanVsReality() {
     addUnplannedTask,
     updateExecTask,
     removeExecTask,
+    moveExecTask,
+    moveExecTaskToDate,
     syncToExecution,
     importData,
     resetToDemo,
@@ -37,6 +40,7 @@ export default function PlanVsReality() {
 
   const [isSyncHovered, setIsSyncHovered] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [moveTarget, setMoveTarget] = useState(null); // { phaseId, task }
 
   const todayStr = new Date().toISOString().slice(0, 10);
   const isToday = currentDate === todayStr;
@@ -67,6 +71,8 @@ export default function PlanVsReality() {
         execution={execution}
         currentDate={currentDate}
         updateExecTask={updateExecTask}
+        moveExecTask={moveExecTask}
+        moveExecTaskToDate={moveExecTaskToDate}
         setView={setView}
       />
     );
@@ -398,6 +404,7 @@ export default function PlanVsReality() {
                   onAddTask={addUnplannedTask}
                   onUpdateTask={updateExecTask}
                   onRemoveTask={removeExecTask}
+                  onMoveRequest={(phaseId, task) => setMoveTarget({ phaseId, task })}
                 />
               ))
             )}
@@ -438,6 +445,39 @@ export default function PlanVsReality() {
           </div>
         ))}
       </div>
+
+      {/* Move menu hint */}
+      {synced && (
+        <div
+          style={{
+            marginTop: 12,
+            textAlign: "center",
+            fontSize: 10,
+            color: "rgba(255,255,255,0.15)",
+            letterSpacing: 0.3,
+          }}
+        >
+          Long-press a task to move it
+        </div>
+      )}
+
+      {/* Move menu */}
+      {moveTarget && (
+        <MoveMenu
+          task={moveTarget.task}
+          currentPhaseId={moveTarget.phaseId}
+          currentDate={currentDate}
+          onMoveToPhase={(fromPhaseId, taskId, toPhaseId) => {
+            moveExecTask(fromPhaseId, taskId, toPhaseId);
+            setMoveTarget(null);
+          }}
+          onMoveToDate={(fromPhaseId, taskId, targetDate, toPhaseId) => {
+            moveExecTaskToDate(fromPhaseId, taskId, targetDate, toPhaseId);
+            setMoveTarget(null);
+          }}
+          onClose={() => setMoveTarget(null)}
+        />
+      )}
     </div>
   );
 }

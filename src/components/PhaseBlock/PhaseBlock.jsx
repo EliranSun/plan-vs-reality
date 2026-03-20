@@ -1,7 +1,7 @@
 import { useState, memo } from "react";
 import TaskCard from "../TaskCard/TaskCard";
 
-function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask }) {
+function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask, onMoveRequest }) {
   const [isAddHovered, setIsAddHovered] = useState(false);
 
   return (
@@ -47,6 +47,7 @@ function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask 
             side={side}
             onUpdate={(updated) => onUpdateTask(phase.id, task.id, updated)}
             onRemove={() => onRemoveTask(phase.id, task.id)}
+            onMoveRequest={onMoveRequest ? (t) => onMoveRequest(phase.id, t) : undefined}
           />
         ))}
       </div>

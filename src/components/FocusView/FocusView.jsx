@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { PHASES, STATUS_COLORS } from "../../constants/phases";
 import TimePill from "../TimePill/TimePill";
+import MoveMenu from "../MoveMenu/MoveMenu";
 
 function getCurrentPhaseIdx() {
   const h = new Date().getHours();
@@ -11,12 +12,21 @@ function getCurrentPhaseIdx() {
   return 0;
 }
 
-export default function FocusView({ execution, currentDate, updateExecTask, setView }) {
+export default function FocusView({ execution, currentDate, updateExecTask, moveExecTask, moveExecTaskToDate, setView }) {
   const [activeIdx, setActiveIdx] = useState(getCurrentPhaseIdx);
   const [slideDir, setSlideDir] = useState("right");
   const [poppingId, setPoppingId] = useState(null);
   const [justCompletedId, setJustCompletedId] = useState(null);
   const touchStartX = useRef(null);
+  const [moveTarget, setMoveTarget] = useState(null);
+  const pressTimer = useRef(null);
+  const [pressingId, setPressingId] = useState(null);
+
+  const clearPress = useCallback(() => {
+    clearTimeout(pressTimer.current);
+    pressTimer.current = null;
+    setPressingId(null);
+  }, []);
 
   const activePhase = PHASES[activeIdx];
   const tasks = execution[activePhase.id] || [];
@@ -214,6 +224,22 @@ export default function FocusView({ execution, currentDate, updateExecTask, setV
               <div
                 key={task.id}
                 onClick={() => handleTaskClick(task)}
+                onPointerDown={(e) => {
+                  if (e.button && e.button !== 0) return;
+                  setPressingId(task.id);
+                  pressTimer.current = setTimeout(() => {
+                    setPressingId(null);
+                    setMoveTarget({ phaseId: activePhase.id, task });
+                  }, 500);
+                }}
+                onPointerUp={clearPress}
+                onPointerCancel={clearPress}
+                onPointerLeave={clearPress}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  clearPress();
+                  setMoveTarget({ phaseId: activePhase.id, task });
+                }}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -222,8 +248,10 @@ export default function FocusView({ execution, currentDate, updateExecTask, setV
                   borderBottom: "1px solid rgba(255,255,255,0.05)",
                   cursor: "pointer",
                   animation: isPopping ? "taskPop 0.32s ease both" : "none",
-                  transition: "opacity 0.25s ease",
+                  transition: "opacity 0.25s ease, transform 0.15s ease",
                   opacity: isDropped ? 0.22 : 1,
+                  transform: pressingId === task.id ? "scale(0.98)" : "scale(1)",
+                  touchAction: "none",
                 }}
               >
                 {/* Status bar */}
@@ -417,6 +445,24 @@ export default function FocusView({ execution, currentDate, updateExecTask, setV
           ›
         </button>
       </div>
+
+      {/* Move menu */}
+      {moveTarget && (
+        <MoveMenu
+          task={moveTarget.task}
+          currentPhaseId={moveTarget.phaseId}
+          currentDate={currentDate}
+          onMoveToPhase={(fromPhaseId, taskId, toPhaseId) => {
+            moveExecTask(fromPhaseId, taskId, toPhaseId);
+            setMoveTarget(null);
+          }}
+          onMoveToDate={(fromPhaseId, taskId, targetDate, toPhaseId) => {
+            moveExecTaskToDate(fromPhaseId, taskId, targetDate, toPhaseId);
+            setMoveTarget(null);
+          }}
+          onClose={() => setMoveTarget(null)}
+        />
+      )}
     </div>
   );
 }

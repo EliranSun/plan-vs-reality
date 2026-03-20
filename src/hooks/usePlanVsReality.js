@@ -203,6 +203,55 @@ export function usePlanVsReality() {
     }));
   }, []);
 
+  const moveExecTask = useCallback((fromPhaseId, taskId, toPhaseId) => {
+    setExecution((prev) => {
+      const task = prev[fromPhaseId]?.find((t) => t.id === taskId);
+      if (!task) return prev;
+      const movedTask = {
+        ...task,
+        status: "moved",
+        movedFrom: fromPhaseId,
+      };
+      return {
+        ...prev,
+        [fromPhaseId]: prev[fromPhaseId].filter((t) => t.id !== taskId),
+        [toPhaseId]: [...(prev[toPhaseId] || []), movedTask],
+      };
+    });
+  }, []);
+
+  const moveExecTaskToDate = useCallback((fromPhaseId, taskId, targetDate, toPhaseId) => {
+    let movedTask = null;
+    setExecution((prev) => {
+      const task = prev[fromPhaseId]?.find((t) => t.id === taskId);
+      if (!task) return prev;
+      movedTask = {
+        ...task,
+        status: "moved",
+        movedFrom: fromPhaseId,
+      };
+      return {
+        ...prev,
+        [fromPhaseId]: prev[fromPhaseId].filter((t) => t.id !== taskId),
+      };
+    });
+
+    // Save the moved task to the target day
+    if (movedTask) {
+      const targetDay = loadDayFromStorage(targetDate) || {
+        plan: emptyPhases(),
+        execution: emptyPhases(),
+        synced: true,
+      };
+      const phaseTarget = toPhaseId || fromPhaseId;
+      targetDay.execution[phaseTarget] = [
+        ...(targetDay.execution[phaseTarget] || []),
+        movedTask,
+      ];
+      saveDayToStorage(targetDate, targetDay);
+    }
+  }, []);
+
   const importData = useCallback((data) => {
     if (!data?.plan || !data?.execution) return false;
     setPlan(data.plan);
@@ -241,6 +290,8 @@ export function usePlanVsReality() {
     addUnplannedTask,
     updateExecTask,
     removeExecTask,
+    moveExecTask,
+    moveExecTaskToDate,
     syncToExecution,
     importData,
     resetToDemo,
