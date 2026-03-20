@@ -85,7 +85,7 @@ export default function PlanVsReality() {
         background: "#0f1117",
         color: "#fff",
         fontFamily: "'DM Sans', sans-serif",
-        padding: "32px 24px 64px",
+        padding: "16px 12px 32px",
         maxWidth: 960,
         margin: "0 auto",
       }}
@@ -282,7 +282,7 @@ export default function PlanVsReality() {
         style={{
           display: "grid",
           gridTemplateColumns: view === "split" ? "1fr 1fr" : "1fr",
-          gap: 32,
+          gap: 16,
         }}
       >
         {/* Plan Column */}
