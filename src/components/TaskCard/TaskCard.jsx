@@ -40,6 +40,7 @@ function TaskCard({ task, side, onUpdate, onRemove, onMoveRequest }) {
 
   return (
     <div
+      className="pvr-task-card"
       style={{
         display: "flex",
         alignItems: "center",
@@ -107,6 +108,7 @@ function TaskCard({ task, side, onUpdate, onRemove, onMoveRequest }) {
           }}
           onPointerDown={(e) => e.stopPropagation()}
           title={`Status: ${STATUS_LABELS[task.status] || STATUS_LABELS.pending}. Click to cycle.`}
+          className="pvr-status-btn"
           style={{
             width: 22,
             height: 22,
@@ -151,6 +153,7 @@ function TaskCard({ task, side, onUpdate, onRemove, onMoveRequest }) {
           value={task.text}
           onChange={(text) => onUpdate({ ...task, text })}
           placeholder="What's the task?"
+          className="pvr-task-text"
           style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: 14,

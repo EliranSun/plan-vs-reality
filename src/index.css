@@ -64,11 +64,59 @@ body {
 
 @media (max-width: 600px) {
   .pvr-container {
-    padding: 20px 16px 48px;
+    padding: 16px 12px 40px;
   }
 
   .pvr-split-grid.is-split {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 12px;
+  }
+
+  .pvr-main-title {
+    font-size: 22px !important;
+  }
+
+  .pvr-col-header {
+    gap: 6px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .pvr-col-header h2 {
+    font-size: 15px !important;
+  }
+
+  .pvr-phase-header {
+    gap: 4px !important;
+  }
+
+  .pvr-phase-icon {
+    font-size: 13px !important;
+  }
+
+  .pvr-phase-label {
+    font-size: 13px !important;
+  }
+
+  .pvr-phase-hours {
+    display: none;
+  }
+
+  .pvr-task-card {
+    padding: 6px 8px !important;
+    gap: 5px !important;
+  }
+
+  .pvr-task-card .pvr-status-btn {
+    width: 17px !important;
+    height: 17px !important;
+    font-size: 10px !important;
+  }
+
+  .pvr-task-text {
+    font-size: 11px !important;
+  }
+
+  .pvr-add-task-btn {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
   }
 }

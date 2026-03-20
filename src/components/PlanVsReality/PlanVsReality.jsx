@@ -100,6 +100,7 @@ export default function PlanVsReality() {
       <div style={{ marginBottom: 28, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
         <div>
           <h1
+            className="pvr-main-title"
             style={{
               fontFamily: "'Instrument Serif', serif",
               fontSize: 36,
@@ -286,6 +287,7 @@ export default function PlanVsReality() {
         {showPlan && (
           <div>
             <div
+              className="pvr-col-header"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -348,6 +350,7 @@ export default function PlanVsReality() {
         {showExec && (
           <div>
             <div
+              className="pvr-col-header"
               style={{
                 display: "flex",
                 alignItems: "center",
