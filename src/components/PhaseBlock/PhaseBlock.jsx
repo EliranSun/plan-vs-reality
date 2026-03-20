@@ -8,6 +8,7 @@ function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask,
     <div style={{ marginBottom: 8 }}>
       {/* Phase header */}
       <div
+        className="pvr-phase-header"
         style={{
           display: "flex",
           alignItems: "center",
@@ -16,8 +17,9 @@ function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask,
           padding: "0 4px",
         }}
       >
-        <span style={{ fontSize: 18 }}>{phase.icon}</span>
+        <span className="pvr-phase-icon" style={{ fontSize: 18 }}>{phase.icon}</span>
         <span
+          className="pvr-phase-label"
           style={{
             fontFamily: "'Instrument Serif', serif",
             fontSize: 17,
@@ -28,6 +30,7 @@ function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask,
           {phase.label}
         </span>
         <span
+          className="pvr-phase-hours"
           style={{
             fontSize: 11,
             color: "rgba(255,255,255,0.3)",
@@ -54,6 +57,7 @@ function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask,
 
       {/* Add button */}
       <button
+        className="pvr-add-task-btn"
         onClick={() => onAddTask(phase.id)}
         style={{
           marginTop: 8,
