@@ -4,6 +4,8 @@ html,
 body {
   margin: 0;
   background-color: #0f1117;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 @keyframes fadeSlideIn {

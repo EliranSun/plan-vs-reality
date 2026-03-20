@@ -267,9 +267,10 @@ export default function FocusView({ execution, currentDate, updateExecTask, move
                 />
 
                 {/* Task text */}
-                <div style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+                <div style={{ flex: 1, overflow: "hidden" }}>
                   <span
                     style={{
+                      position: "relative",
                       fontSize: "clamp(24px, 4.5vw, 34px)",
                       fontWeight: 400,
                       color: isCompleted
@@ -283,6 +284,21 @@ export default function FocusView({ execution, currentDate, updateExecTask, move
                     }}
                   >
                     {task.text || <em style={{ opacity: 0.4 }}>Untitled task</em>}
+                    {/* Animated strikethrough */}
+                    {isCompleted && (
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: 0,
+                          height: 2,
+                          background: "rgba(255,255,255,0.25)",
+                          borderRadius: 1,
+                          animation: "strikeGrow 0.3s ease both",
+                          width: "100%",
+                        }}
+                      />
+                    )}
                   </span>
                   {showPlannedMeta && (
                     <span
@@ -296,22 +312,6 @@ export default function FocusView({ execution, currentDate, updateExecTask, move
                     >
                       {plannedMeta}
                     </span>
-                  )}
-
-                  {/* Animated strikethrough */}
-                  {isCompleted && (
-                    <span
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: 0,
-                        height: 2,
-                        background: "rgba(255,255,255,0.25)",
-                        borderRadius: 1,
-                        animation: "strikeGrow 0.3s ease both",
-                        width: "100%",
-                      }}
-                    />
                   )}
                 </div>
 
