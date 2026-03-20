@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 const TIME_PRESETS = [
   { label: "15m", minutes: 15 },
@@ -19,14 +20,31 @@ export function formatMinutes(minutes) {
 export default function TimePill({ estimatedMinutes, onChange, visible }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const popoverRef = useRef(null);
+  const [popoverPos, setPopoverPos] = useState(null);
 
   useEffect(() => {
     if (!open) return;
     function handler(e) {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+      if (
+        (ref.current && ref.current.contains(e.target)) ||
+        (popoverRef.current && popoverRef.current.contains(e.target))
+      )
+        return;
+      setOpen(false);
     }
     document.addEventListener("pointerdown", handler);
     return () => document.removeEventListener("pointerdown", handler);
+  }, [open]);
+
+  useEffect(() => {
+    if (open && ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setPopoverPos({
+        top: rect.top - 6,
+        right: window.innerWidth - rect.right,
+      });
+    }
   }, [open]);
 
   const label = formatMinutes(estimatedMinutes);
@@ -57,12 +75,14 @@ export default function TimePill({ estimatedMinutes, onChange, visible }) {
         {label ?? "⏱"}
       </button>
 
-      {open && (
+      {open && popoverPos && createPortal(
         <div
+          ref={popoverRef}
           style={{
-            position: "absolute",
-            right: 0,
-            bottom: "calc(100% + 6px)",
+            position: "fixed",
+            right: popoverPos.right,
+            top: popoverPos.top,
+            transform: "translateY(-100%)",
             background: "#1e1e2e",
             border: "1px solid rgba(255,255,255,0.12)",
             borderRadius: 10,
@@ -71,7 +91,7 @@ export default function TimePill({ estimatedMinutes, onChange, visible }) {
             flexWrap: "wrap",
             gap: 4,
             width: 148,
-            zIndex: 100,
+            zIndex: 10000,
             boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
           }}
           onPointerDown={(e) => e.stopPropagation()}
@@ -121,7 +141,8 @@ export default function TimePill({ estimatedMinutes, onChange, visible }) {
               ✕ clear
             </button>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
