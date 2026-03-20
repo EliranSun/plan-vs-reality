@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { PHASES } from "../../constants/phases";
+import { formatMinutes } from "../TimePill/TimePill";
 
 function formatDateSlug() {
   const d = new Date();
@@ -24,7 +25,8 @@ function buildMarkdown(plan, execution, synced) {
     if (!tasks.length) return;
     md += `### ${phase.icon} ${phase.label} (${phase.hours})\n`;
     tasks.forEach((t) => {
-      md += `- [ ] ${t.text}\n`;
+      const timeTag = t.estimatedMinutes ? ` ⏱${formatMinutes(t.estimatedMinutes)}` : "";
+      md += `- [ ] ${t.text}${timeTag}\n`;
     });
     md += "\n";
   });
@@ -38,7 +40,8 @@ function buildMarkdown(plan, execution, synced) {
       tasks.forEach((t) => {
         const icon = statusIcon[t.status] ?? "⬜";
         const tag = t.status !== "pending" ? ` _(${t.status})_` : "";
-        md += `- ${icon} ${t.text}${tag}\n`;
+        const timeTag = t.estimatedMinutes ? ` ⏱${formatMinutes(t.estimatedMinutes)}` : "";
+        md += `- ${icon} ${t.text}${timeTag}${tag}\n`;
       });
       md += "\n";
     });

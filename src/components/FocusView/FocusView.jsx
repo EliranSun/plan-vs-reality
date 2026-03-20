@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { PHASES, STATUS_COLORS } from "../../constants/phases";
+import TimePill from "../TimePill/TimePill";
 
 function getCurrentPhaseIdx() {
   const h = new Date().getHours();
@@ -267,6 +268,15 @@ export default function FocusView({ execution, currentDate, updateExecTask, setV
                     />
                   )}
                 </div>
+
+                {/* Time pill */}
+                <TimePill
+                  estimatedMinutes={task.estimatedMinutes}
+                  onChange={(minutes) =>
+                    updateExecTask(activePhase.id, task.id, { ...task, estimatedMinutes: minutes })
+                  }
+                  visible={!!task.estimatedMinutes}
+                />
 
                 {/* Checkmark */}
                 <div
