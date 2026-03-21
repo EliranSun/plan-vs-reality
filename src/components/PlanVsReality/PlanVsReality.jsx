@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePlanVsReality } from "../../hooks/usePlanVsReality";
-import { PHASES, STATUS_COLORS, STATUS_LABELS } from "../../constants/phases";
+import { PHASES, STATUS_LABELS } from "../../constants/phases";
 import PhaseBlock from "../PhaseBlock/PhaseBlock";
 import DiffSummary from "../DiffSummary/DiffSummary";
 import DataMenu from "../DataMenu/DataMenu";
@@ -38,7 +38,6 @@ export default function PlanVsReality() {
     clearAll,
   } = usePlanVsReality();
 
-  const [isSyncHovered, setIsSyncHovered] = useState(false);
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [moveTarget, setMoveTarget] = useState(null); // { phaseId, task }
 
@@ -53,6 +52,13 @@ export default function PlanVsReality() {
 
   const showPlan = view === "split" || view === "plan";
   const showExec = view === "split" || view === "execution";
+  const statusColorClasses = {
+    completed: "bg-emerald-400",
+    dropped: "bg-red-400",
+    moved: "bg-amber-400",
+    unplanned: "bg-violet-400",
+    pending: "bg-slate-400",
+  };
 
   if (calendarOpen) {
     return (
@@ -79,99 +85,44 @@ export default function PlanVsReality() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#0f1117",
-        color: "#fff",
-        fontFamily: "'DM Sans', sans-serif",
-        padding: "16px 12px 32px",
-        maxWidth: 960,
-        margin: "0 auto",
-      }}
-    >
+    <div className="mx-auto min-h-screen max-w-[960px] bg-[#0f1117] px-3 pt-4 pb-8 font-['DM_Sans',sans-serif] text-white">
       <link
         href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap"
         rel="stylesheet"
       />
 
       {/* Header */}
-      <div style={{ marginBottom: 28, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+      <div className="mb-7 flex items-start justify-between">
         <div>
-          <h1
-            style={{
-              fontFamily: "'Instrument Serif', serif",
-              fontSize: 36,
-              fontWeight: 400,
-              color: "rgba(255,255,255,0.92)",
-              margin: 0,
-              letterSpacing: -0.5,
-            }}
-          >
+          <h1 className="m-0 font-['Instrument_Serif',serif] text-4xl font-normal tracking-[-0.5px] text-white/90">
             Plan{" "}
-            <span style={{ color: "rgba(255,255,255,0.25)", fontStyle: "italic" }}>
+            <span className="text-white/25 italic">
               vs.
             </span>{" "}
             Reality
           </h1>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              marginTop: 6,
-            }}
-          >
+          <div className="mt-1.5 flex items-center gap-1">
             <button
               onClick={() => navigateToDate(offsetDate(currentDate, -1))}
               title="Previous day"
-              style={{
-                background: "none",
-                border: "none",
-                color: "rgba(255,255,255,0.25)",
-                fontSize: 16,
-                cursor: "pointer",
-                padding: "0 4px",
-                lineHeight: 1,
-              }}
+              className="cursor-pointer border-none bg-transparent px-1 py-0 text-base leading-none text-white/25"
             >
               ‹
             </button>
             <button
               onClick={() => setCalendarOpen(true)}
               title="Open calendar"
-              style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: 0,
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-              }}
+              className="flex cursor-pointer items-center gap-1.5 border-none bg-transparent p-0"
             >
-              <span
-                style={{
-                  fontSize: 14,
-                  color: isToday ? "rgba(255,255,255,0.35)" : "rgba(255,255,255,0.55)",
-                }}
-              >
+              <span className={`text-sm ${isToday ? "text-white/35" : "text-white/55"}`}>
                 {formattedDate}
               </span>
-              <span style={{ fontSize: 13, opacity: 0.4 }}>📅</span>
+              <span className="text-[13px] opacity-40">📅</span>
             </button>
             <button
               onClick={() => navigateToDate(offsetDate(currentDate, 1))}
               title="Next day"
-              style={{
-                background: "none",
-                border: "none",
-                color: "rgba(255,255,255,0.25)",
-                fontSize: 16,
-                cursor: "pointer",
-                padding: "0 4px",
-                lineHeight: 1,
-              }}
+              className="cursor-pointer border-none bg-transparent px-1 py-0 text-base leading-none text-white/25"
             >
               ›
             </button>
@@ -179,17 +130,7 @@ export default function PlanVsReality() {
               <button
                 onClick={() => navigateToDate(todayStr)}
                 title="Go to today"
-                style={{
-                  background: "rgba(255,255,255,0.06)",
-                  border: "none",
-                  borderRadius: 5,
-                  color: "rgba(255,255,255,0.4)",
-                  fontSize: 10,
-                  cursor: "pointer",
-                  padding: "3px 7px",
-                  fontFamily: "'DM Sans', sans-serif",
-                  letterSpacing: 0.3,
-                }}
+                className="cursor-pointer rounded-[5px] border-none bg-white/6 px-[7px] py-[3px] font-['DM_Sans',sans-serif] text-[10px] tracking-[0.3px] text-white/40"
               >
                 Today
               </button>
@@ -207,17 +148,7 @@ export default function PlanVsReality() {
       </div>
 
       {/* View toggle */}
-      <div
-        style={{
-          display: "flex",
-          gap: 4,
-          marginBottom: 20,
-          background: "rgba(255,255,255,0.04)",
-          borderRadius: 10,
-          padding: 4,
-          width: "fit-content",
-        }}
-      >
+      <div className="mb-5 flex w-fit gap-1 rounded-[10px] bg-white/4 p-1">
         {[
           { id: "plan", label: "Plan" },
           { id: "split", label: "Split" },
@@ -227,22 +158,11 @@ export default function PlanVsReality() {
           <button
             key={v.id}
             onClick={() => setView(v.id)}
-            style={{
-              padding: "7px 18px",
-              borderRadius: 8,
-              border: "none",
-              background:
-                view === v.id ? "rgba(255,255,255,0.1)" : "transparent",
-              color:
-                view === v.id
-                  ? "rgba(255,255,255,0.9)"
-                  : "rgba(255,255,255,0.35)",
-              fontSize: 13,
-              fontWeight: 500,
-              cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif",
-              transition: "all 0.15s",
-            }}
+            className={`cursor-pointer rounded-lg border-none px-[18px] py-[7px] font-['DM_Sans',sans-serif] text-[13px] font-medium transition-all duration-150 ${
+              view === v.id
+                ? "bg-white/10 text-white/90"
+                : "bg-transparent text-white/35"
+            }`}
           >
             {v.label}
           </button>
@@ -256,79 +176,24 @@ export default function PlanVsReality() {
       {!synced && (
         <button
           onClick={syncToExecution}
-          style={{
-            display: "block",
-            margin: "0 auto 28px",
-            padding: "12px 32px",
-            borderRadius: 10,
-            border: `1px solid ${isSyncHovered ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.15)"}`,
-            background: isSyncHovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)",
-            color: "rgba(255,255,255,0.75)",
-            fontSize: 14,
-            fontWeight: 500,
-            cursor: "pointer",
-            fontFamily: "'DM Sans', sans-serif",
-            transition: "all 0.2s",
-          }}
-          onMouseEnter={() => setIsSyncHovered(true)}
-          onMouseLeave={() => setIsSyncHovered(false)}
+          className="mx-auto mb-7 block cursor-pointer rounded-[10px] border border-white/15 bg-white/6 px-8 py-3 font-['DM_Sans',sans-serif] text-sm font-medium text-white/75 transition-all duration-200 hover:border-white/30 hover:bg-white/10"
         >
           Lock plan → Start tracking reality
         </button>
       )}
 
       {/* Two columns */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: view === "split" ? "1fr 1fr" : "1fr",
-          gap: 16,
-        }}
-      >
+      <div className={`grid gap-4 ${view === "split" ? "grid-cols-2" : "grid-cols-1"}`}>
         {/* Plan Column */}
         {showPlan && (
           <div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                marginBottom: 20,
-                paddingBottom: 12,
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-              }}
-            >
-              <div
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #60a5fa, #818cf8)",
-                }}
-              />
-              <h2
-                style={{
-                  fontFamily: "'Instrument Serif', serif",
-                  fontSize: 22,
-                  fontWeight: 400,
-                  color: "rgba(255,255,255,0.7)",
-                  margin: 0,
-                }}
-              >
+            <div className="mb-5 flex items-center gap-2.5 border-b border-white/6 pb-3">
+              <div className="size-2.5 rounded-full bg-linear-to-br from-blue-400 to-indigo-400" />
+              <h2 className="m-0 font-['Instrument_Serif',serif] text-[22px] font-normal text-white/70">
                 The Plan
               </h2>
               {synced && (
-                <span
-                  style={{
-                    fontSize: 10,
-                    background: "rgba(255,255,255,0.06)",
-                    padding: "3px 8px",
-                    borderRadius: 5,
-                    color: "rgba(255,255,255,0.3)",
-                    textTransform: "uppercase",
-                    letterSpacing: 0.8,
-                  }}
-                >
+                <span className="rounded-[5px] bg-white/6 px-2 py-[3px] text-[10px] tracking-[0.8px] text-white/30 uppercase">
                   locked
                 </span>
               )}
@@ -350,48 +215,14 @@ export default function PlanVsReality() {
         {/* Execution Column */}
         {showExec && (
           <div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                marginBottom: 20,
-                paddingBottom: 12,
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-              }}
-            >
-              <div
-                style={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #34d399, #fbbf24)",
-                }}
-              />
-              <h2
-                style={{
-                  fontFamily: "'Instrument Serif', serif",
-                  fontSize: 22,
-                  fontWeight: 400,
-                  color: "rgba(255,255,255,0.7)",
-                  margin: 0,
-                }}
-              >
+            <div className="mb-5 flex items-center gap-2.5 border-b border-white/6 pb-3">
+              <div className="size-2.5 rounded-full bg-linear-to-br from-emerald-400 to-amber-400" />
+              <h2 className="m-0 font-['Instrument_Serif',serif] text-[22px] font-normal text-white/70">
                 Reality
               </h2>
             </div>
             {!synced ? (
-              <div
-                style={{
-                  padding: "40px 20px",
-                  textAlign: "center",
-                  color: "rgba(255,255,255,0.2)",
-                  fontSize: 14,
-                  fontStyle: "italic",
-                  border: "1px dashed rgba(255,255,255,0.08)",
-                  borderRadius: 12,
-                }}
-              >
+              <div className="rounded-xl border border-dashed border-white/8 px-5 py-10 text-center text-sm italic text-white/20">
                 Set up your plan first, then lock it to start tracking
               </div>
             ) : (
@@ -413,34 +244,10 @@ export default function PlanVsReality() {
       </div>
 
       {/* Legend */}
-      <div
-        style={{
-          marginTop: 40,
-          display: "flex",
-          gap: 20,
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
+      <div className="mt-10 flex flex-wrap justify-center gap-5">
         {Object.entries(STATUS_LABELS).map(([key, label]) => (
-          <div
-            key={key}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              fontSize: 11,
-              color: "rgba(255,255,255,0.35)",
-            }}
-          >
-            <div
-              style={{
-                width: 8,
-                height: 8,
-                borderRadius: 3,
-                background: STATUS_COLORS[key],
-              }}
-            />
+          <div key={key} className="flex items-center gap-1.5 text-[11px] text-white/35">
+            <div className={`size-2 rounded-[3px] ${statusColorClasses[key] || "bg-slate-400"}`} />
             {label}
           </div>
         ))}
@@ -448,15 +255,7 @@ export default function PlanVsReality() {
 
       {/* Move menu hint */}
       {synced && (
-        <div
-          style={{
-            marginTop: 12,
-            textAlign: "center",
-            fontSize: 10,
-            color: "rgba(255,255,255,0.15)",
-            letterSpacing: 0.3,
-          }}
-        >
+        <div className="mt-3 text-center text-[10px] tracking-[0.3px] text-white/15">
           Long-press a task to move it
         </div>
       )}
