@@ -233,7 +233,6 @@ export default function CalendarView({ allDaySummaries, currentDate, onSelectDat
             <button
               key={dateStr}
               onClick={() => { onSelectDate(dateStr); onClose(); }}
-              disabled={isFuture && !summary}
               style={{
                 aspectRatio: "1",
                 borderRadius: 10,
@@ -247,7 +246,7 @@ export default function CalendarView({ allDaySummaries, currentDate, onSelectDat
                   : isSelected
                   ? "rgba(255,255,255,0.06)"
                   : "rgba(255,255,255,0.02)",
-                cursor: isFuture && !summary ? "default" : "pointer",
+                cursor: "pointer",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -255,7 +254,7 @@ export default function CalendarView({ allDaySummaries, currentDate, onSelectDat
                 gap: 3,
                 padding: "6px 2px",
                 transition: "all 0.15s",
-                opacity: isFuture && !summary ? 0.3 : 1,
+                opacity: isFuture && !summary ? 0.5 : 1,
               }}
             >
               <span
