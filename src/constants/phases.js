@@ -1,8 +1,8 @@
 export const PHASES = [
-  { id: "morning", label: "Morning", icon: "☀️", hours: "6am – 12pm" },
-  { id: "midday", label: "Midday", icon: "🌤", hours: "12pm – 3pm" },
-  { id: "afternoon", label: "Afternoon", icon: "🌅", hours: "3pm – 6pm" },
-  { id: "evening", label: "Evening", icon: "🌙", hours: "6pm – 10pm" },
+  { id: "morning",   label: "Morning",   icon: "☀️",  hours: "6am – 12pm", totalMinutes: 360 },
+  { id: "midday",    label: "Midday",    icon: "🌤",  hours: "12pm – 3pm", totalMinutes: 180 },
+  { id: "afternoon", label: "Afternoon", icon: "🌅",  hours: "3pm – 6pm",  totalMinutes: 180 },
+  { id: "evening",   label: "Evening",   icon: "🌙",  hours: "6pm – 10pm", totalMinutes: 240 },
 ];
 
 export const STATUS_COLORS = {
