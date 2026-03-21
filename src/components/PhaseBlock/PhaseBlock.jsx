@@ -1,42 +1,47 @@
 import { useState, memo } from "react";
 import TaskCard from "../TaskCard/TaskCard";
 
-function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask, onMoveRequest }) {
+export function PhaseHeader({ phase }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 10,
+        padding: "0 4px",
+      }}
+    >
+      <span style={{ fontSize: 18 }}>{phase.icon}</span>
+      <span
+        style={{
+          fontFamily: "'Instrument Serif', serif",
+          fontSize: 17,
+          color: "rgba(255,255,255,0.75)",
+          fontWeight: 400,
+        }}
+      >
+        {phase.label}
+      </span>
+      <span
+        style={{
+          fontSize: 11,
+          color: "rgba(255,255,255,0.3)",
+          fontFamily: "'DM Sans', sans-serif",
+        }}
+      >
+        {phase.hours}
+      </span>
+    </div>
+  );
+}
+
+function PhaseBlock({ phase, tasks, side, onAddTask, onUpdateTask, onRemoveTask, onMoveRequest, showHeader = true }) {
   const [isAddHovered, setIsAddHovered] = useState(false);
 
   return (
     <div style={{ marginBottom: 8 }}>
-      {/* Phase header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-          marginBottom: 10,
-          padding: "0 4px",
-        }}
-      >
-        <span style={{ fontSize: 18 }}>{phase.icon}</span>
-        <span
-          style={{
-            fontFamily: "'Instrument Serif', serif",
-            fontSize: 17,
-            color: "rgba(255,255,255,0.75)",
-            fontWeight: 400,
-          }}
-        >
-          {phase.label}
-        </span>
-        <span
-          style={{
-            fontSize: 11,
-            color: "rgba(255,255,255,0.3)",
-            fontFamily: "'DM Sans', sans-serif",
-          }}
-        >
-          {phase.hours}
-        </span>
-      </div>
+      {showHeader && <PhaseHeader phase={phase} />}
 
       {/* Task list */}
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>

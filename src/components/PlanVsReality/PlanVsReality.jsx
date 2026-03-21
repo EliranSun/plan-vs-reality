@@ -2,6 +2,7 @@ import { useState } from "react";
 import { usePlanVsReality } from "../../hooks/usePlanVsReality";
 import { PHASES, STATUS_LABELS } from "../../constants/phases";
 import PhaseBlock from "../PhaseBlock/PhaseBlock";
+import { PhaseHeader } from "../PhaseBlock/PhaseBlock";
 import DiffSummary from "../DiffSummary/DiffSummary";
 import DataMenu from "../DataMenu/DataMenu";
 import FocusView from "../FocusView/FocusView";
@@ -182,12 +183,12 @@ export default function PlanVsReality() {
         </button>
       )}
 
-      {/* Two columns */}
-      <div className={`grid gap-4 ${view === "split" ? "grid-cols-2" : "grid-cols-1"}`}>
-        {/* Plan Column */}
-        {showPlan && (
-          <div>
-            <div className="mb-5 flex items-center gap-2.5 border-b border-white/6 pb-3">
+      {/* Split view — shared phase headers */}
+      {view === "split" && (
+        <div>
+          {/* Column headers */}
+          <div className="grid grid-cols-2 gap-4 mb-5">
+            <div className="flex items-center gap-2.5 border-b border-white/6 pb-3">
               <div className="size-2.5 rounded-full bg-linear-to-br from-blue-400 to-indigo-400" />
               <h2 className="m-0 font-['Instrument_Serif',serif] text-[22px] font-normal text-white/70">
                 The Plan
@@ -198,50 +199,112 @@ export default function PlanVsReality() {
                 </span>
               )}
             </div>
-            {PHASES.map((phase) => (
-              <PhaseBlock
-                key={phase.id}
-                phase={phase}
-                tasks={plan[phase.id] || []}
-                side="plan"
-                onAddTask={addPlanTask}
-                onUpdateTask={updatePlanTask}
-                onRemoveTask={removePlanTask}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Execution Column */}
-        {showExec && (
-          <div>
-            <div className="mb-5 flex items-center gap-2.5 border-b border-white/6 pb-3">
+            <div className="flex items-center gap-2.5 border-b border-white/6 pb-3">
               <div className="size-2.5 rounded-full bg-linear-to-br from-emerald-400 to-amber-400" />
               <h2 className="m-0 font-['Instrument_Serif',serif] text-[22px] font-normal text-white/70">
                 Reality
               </h2>
             </div>
-            {!synced ? (
-              <div className="rounded-xl border border-dashed border-white/8 px-5 py-10 text-center text-sm italic text-white/20">
-                Set up your plan first, then lock it to start tracking
+          </div>
+
+          {/* Phases with shared headers */}
+          {PHASES.map((phase) => (
+            <div key={phase.id}>
+              <PhaseHeader phase={phase} />
+              <div className="grid grid-cols-2 gap-4">
+                <PhaseBlock
+                  phase={phase}
+                  tasks={plan[phase.id] || []}
+                  side="plan"
+                  showHeader={false}
+                  onAddTask={addPlanTask}
+                  onUpdateTask={updatePlanTask}
+                  onRemoveTask={removePlanTask}
+                />
+                {!synced ? (
+                  <div className="rounded-xl border border-dashed border-white/8 px-5 py-10 text-center text-sm italic text-white/20">
+                    Set up your plan first, then lock it to start tracking
+                  </div>
+                ) : (
+                  <PhaseBlock
+                    phase={phase}
+                    tasks={execution[phase.id] || []}
+                    side="execution"
+                    showHeader={false}
+                    onAddTask={addUnplannedTask}
+                    onUpdateTask={updateExecTask}
+                    onRemoveTask={removeExecTask}
+                    onMoveRequest={(phaseId, task) => setMoveTarget({ phaseId, task })}
+                  />
+                )}
               </div>
-            ) : (
-              PHASES.map((phase) => (
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Single column views */}
+      {view !== "split" && (
+        <div>
+          {/* Plan Column */}
+          {showPlan && (
+            <div>
+              <div className="mb-5 flex items-center gap-2.5 border-b border-white/6 pb-3">
+                <div className="size-2.5 rounded-full bg-linear-to-br from-blue-400 to-indigo-400" />
+                <h2 className="m-0 font-['Instrument_Serif',serif] text-[22px] font-normal text-white/70">
+                  The Plan
+                </h2>
+                {synced && (
+                  <span className="rounded-[5px] bg-white/6 px-2 py-[3px] text-[10px] tracking-[0.8px] text-white/30 uppercase">
+                    locked
+                  </span>
+                )}
+              </div>
+              {PHASES.map((phase) => (
                 <PhaseBlock
                   key={phase.id}
                   phase={phase}
-                  tasks={execution[phase.id] || []}
-                  side="execution"
-                  onAddTask={addUnplannedTask}
-                  onUpdateTask={updateExecTask}
-                  onRemoveTask={removeExecTask}
-                  onMoveRequest={(phaseId, task) => setMoveTarget({ phaseId, task })}
+                  tasks={plan[phase.id] || []}
+                  side="plan"
+                  onAddTask={addPlanTask}
+                  onUpdateTask={updatePlanTask}
+                  onRemoveTask={removePlanTask}
                 />
-              ))
-            )}
-          </div>
-        )}
-      </div>
+              ))}
+            </div>
+          )}
+
+          {/* Execution Column */}
+          {showExec && (
+            <div>
+              <div className="mb-5 flex items-center gap-2.5 border-b border-white/6 pb-3">
+                <div className="size-2.5 rounded-full bg-linear-to-br from-emerald-400 to-amber-400" />
+                <h2 className="m-0 font-['Instrument_Serif',serif] text-[22px] font-normal text-white/70">
+                  Reality
+                </h2>
+              </div>
+              {!synced ? (
+                <div className="rounded-xl border border-dashed border-white/8 px-5 py-10 text-center text-sm italic text-white/20">
+                  Set up your plan first, then lock it to start tracking
+                </div>
+              ) : (
+                PHASES.map((phase) => (
+                  <PhaseBlock
+                    key={phase.id}
+                    phase={phase}
+                    tasks={execution[phase.id] || []}
+                    side="execution"
+                    onAddTask={addUnplannedTask}
+                    onUpdateTask={updateExecTask}
+                    onRemoveTask={removeExecTask}
+                    onMoveRequest={(phaseId, task) => setMoveTarget({ phaseId, task })}
+                  />
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Legend */}
       <div className="mt-10 flex flex-wrap justify-center gap-5">
