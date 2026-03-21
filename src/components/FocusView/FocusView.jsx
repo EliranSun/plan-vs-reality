@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import { PHASES, STATUS_COLORS } from "../../constants/phases";
-import TimePill from "../TimePill/TimePill";
+import TimePill, { formatMinutes } from "../TimePill/TimePill";
 import MoveMenu from "../MoveMenu/MoveMenu";
 
 function getCurrentPhaseIdx() {
@@ -71,6 +71,18 @@ export default function FocusView({ execution, currentDate, updateExecTask, move
 
   const completedCount = tasks.filter((t) => t.status === "completed").length;
   const totalCount = tasks.filter((t) => t.status !== "dropped").length;
+
+  const estimatedTotal = tasks
+    .filter(t => t.status !== "dropped")
+    .reduce((sum, t) => sum + (t.estimatedMinutes || 0), 0);
+  const phaseCapacity = activePhase.totalMinutes;
+  const hasAnyEstimate = tasks.some(t => t.estimatedMinutes > 0);
+  const timeIndicatorColor =
+    estimatedTotal > phaseCapacity
+      ? "#f87171"
+      : estimatedTotal > phaseCapacity * 0.8
+      ? "#fbbf24"
+      : "#34d399";
 
   return (
     <div
@@ -181,6 +193,20 @@ export default function FocusView({ execution, currentDate, updateExecTask, move
         >
           {activePhase.hours}
         </p>
+        {hasAnyEstimate && (
+          <p
+            style={{
+              fontSize: 13,
+              color: timeIndicatorColor,
+              margin: "4px 0 0",
+              fontVariantNumeric: "tabular-nums",
+              letterSpacing: 0.2,
+              transition: "color 0.3s ease",
+            }}
+          >
+            {formatMinutes(estimatedTotal)} / {formatMinutes(phaseCapacity)}
+          </p>
+        )}
       </div>
 
       {/* Task list */}
